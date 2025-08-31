@@ -27,7 +27,7 @@ class FileMorphApp(QMainWindow):
 
         
         self.logo_label = QLabel()
-        pixmap = QPixmap("logo.png")  
+        pixmap = QPixmap("logo.ico")  
         if not pixmap.isNull():
             pixmap = pixmap.scaled(65, 65, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             self.logo_label.setPixmap(pixmap)
