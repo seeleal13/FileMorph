@@ -1,4 +1,5 @@
 import sys
+import os
 from PyQt5.QtWidgets import (
     QMainWindow, QApplication, QLabel, QVBoxLayout, QWidget, 
     QHBoxLayout, QLineEdit, QPushButton, QComboBox, QFileDialog
@@ -9,8 +10,14 @@ import json
 import csv
 import xml.etree.ElementTree as ET
 
-class FileMorphApp(QMainWindow):
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS  
+    except AttributeError:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
 
+class FileMorphApp(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("FileMorph")
@@ -22,27 +29,26 @@ class FileMorphApp(QMainWindow):
         self.central_widget.setLayout(self.layout)
 
         self.title_layout = QHBoxLayout()
-        self.title_layout.setAlignment(Qt.AlignHCenter)  
+        self.title_layout.setAlignment(Qt.AlignHCenter)
         self.layout.addLayout(self.title_layout)
 
-        
         self.logo_label = QLabel()
-        pixmap = QPixmap("logo.ico")  
+        pixmap = QPixmap(resource_path("logo.png"))
         if not pixmap.isNull():
             pixmap = pixmap.scaled(65, 65, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             self.logo_label.setPixmap(pixmap)
         else:
-            self.logo_label.setText("(Logo)")  
+            self.logo_label.setText("(Logo)")
         self.title_layout.addWidget(self.logo_label)
 
         self.title_label = QLabel("FileMorph")
-        font = QFont("Lilita One", 24)  
-        font.setBold(True)  
+        font = QFont("Lilita One", 24)
+        font.setBold(True)
         self.title_label.setFont(font)
         self.title_layout.addWidget(self.title_label)
 
-        self.layout.setContentsMargins(0, 20, 0, 0)  
-        self.layout.addSpacing(10)  
+        self.layout.setContentsMargins(0, 20, 0, 0)
+        self.layout.addSpacing(10)
 
         self.file_path_edit = QLineEdit()
         self.file_path_edit.setPlaceholderText("Select a file...")
@@ -66,20 +72,14 @@ class FileMorphApp(QMainWindow):
         self.layout.addStretch()
 
         self.setStyleSheet("""
-            QMainWindow {
-                background-color: #C34915;
-            }
-            QLabel, QLineEdit, QComboBox, QPushButton {
-                color: #F9E0AD;
-            }
+            QMainWindow { background-color: #C34915; }
+            QLabel, QLineEdit, QComboBox, QPushButton { color: #F9E0AD; }
             QLineEdit, QComboBox, QPushButton {
-                background-color: #A83C12;  /* Slightly darker shade for contrast */
+                background-color: #A83C12;
                 border: 1px solid #F9E0AD;
                 padding: 5px;
             }
-            QPushButton:hover {
-                background-color: #D95A1A;  /* Lighter shade on hover */
-            }
+            QPushButton:hover { background-color: #D95A1A; }
         """)
 
     def browse_file(self):
@@ -95,7 +95,6 @@ class FileMorphApp(QMainWindow):
         if not input_path:
             self.status_label.setText("Error: No file selected.")
             return
-
 
         input_ext = '.' + input_path.split('.')[-1].lower()
         output_ext = self.output_combo.currentText()
@@ -140,7 +139,7 @@ class FileMorphApp(QMainWindow):
         if ext == '.txt':
             with open(path, 'r', encoding='utf-8') as f:
                 lines = f.readlines()
-            return [[line.strip()] for line in lines]  
+            return [[line.strip()] for line in lines]
         elif ext == '.csv':
             with open(path, 'r', encoding='utf-8') as f:
                 return list(csv.reader(f))
